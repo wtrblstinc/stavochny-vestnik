@@ -28,3 +28,19 @@ jobs:
           path: .
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy-hosting:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.HOSTING_SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' 'server263.hosting.reg.ru ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHH8zBn7ItpKFerfiMar3kDcO+bIlrYzHauGK+1QdG7r' > ~/.ssh/known_hosts
+      - name: Deploy to ставочныйвестник.рф
+        run: rsync -az --exclude='.git/' --exclude='.github/' ./ u3595452@server263.hosting.reg.ru:/var/www/u3595452/data/www/xn--80aeampdktdf4ahfi3e5c.xn--p1ai/
