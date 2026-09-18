@@ -123,7 +123,7 @@
       });
 
       if (status) {
-        status.textContent = "Показано предложений: " + visible + " из 9";
+        status.textContent = "Показано предложений: " + visible + " из " + cards.length;
       }
     }
 
